@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피그미 다이어리 🐾</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <h1>🐾 피그미 다이어리</h1>
+        <p class="subtitle">우리 피그미의 귀여운 하루하루</p>
+      </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+      <!-- 새 글 작성 버튼 -->
+      <button class="fab" id="btnNewEntry" title="새 일기 쓰기">✏️</button>
+
+      <!-- 필터 바 -->
+      <div class="filter-bar">
+        <div class="filter-tags" id="filterTags">
+          <button class="tag-filter active" data-tag="all">전체</button>
+        </div>
+        <div class="filter-date">
+          <input type="month" id="filterMonth" class="month-picker">
+        </div>
+      </div>
+
+      <!-- 다이어리 목록 -->
+      <div class="diary-list" id="diaryList">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📖</div>
+          <p>아직 일기가 없어요!</p>
+          <p class="empty-sub">아래 ✏️ 버튼을 눌러 피그미의 첫 일기를 써보세요</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- 새 글 작성 모달 -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal" id="entryModal">
+        <div class="modal-header">
+          <h2 id="modalTitle">새 일기 쓰기</h2>
+          <button class="modal-close" id="btnCloseModal">&times;</button>
+        </div>
+        <form id="entryForm">
+          <input type="hidden" id="entryId">
+
+          <div class="form-group">
+            <label for="entryDate">📅 날짜</label>
+            <input type="date" id="entryDate" required>
+          </div>
+
+          <div class="form-group">
+            <label for="entryTitle">💕 제목</label>
+            <input type="text" id="entryTitle" placeholder="오늘의 피그미는..." required>
+          </div>
+
+          <div class="form-group">
+            <label for="entryContent">📝 내용</label>
+            <textarea id="entryContent" rows="5" placeholder="오늘 피그미가 뭘 했는지 적어보세요..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>📸 사진</label>
+            <div class="photo-upload-area" id="photoUploadArea">
+              <input type="file" id="photoInput" accept="image/*" multiple hidden>
+              <div class="photo-placeholder" id="photoPlaceholder">
+                <span class="photo-icon">📷</span>
+                <span>클릭하거나 사진을 끌어다 놓으세요</span>
+              </div>
+              <div class="photo-preview-list" id="photoPreviewList"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🏷️ 태그</label>
+            <div class="tag-input-wrapper">
+              <div class="tag-suggestions">
+                <button type="button" class="tag-suggestion" data-tag="먹방">🍽️ 먹방</button>
+                <button type="button" class="tag-suggestion" data-tag="산책">🚶 산책</button>
+                <button type="button" class="tag-suggestion" data-tag="낮잠">😴 낮잠</button>
+                <button type="button" class="tag-suggestion" data-tag="놀이">🎾 놀이</button>
+                <button type="button" class="tag-suggestion" data-tag="목욕">🛁 목욕</button>
+                <button type="button" class="tag-suggestion" data-tag="병원">🏥 병원</button>
+                <button type="button" class="tag-suggestion" data-tag="귀여움">💖 귀여움</button>
+                <button type="button" class="tag-suggestion" data-tag="장난">😈 장난</button>
+              </div>
+              <div class="custom-tag-input">
+                <input type="text" id="customTagInput" placeholder="커스텀 태그 입력 후 Enter">
+                <button type="button" id="btnAddTag" class="btn-add-tag">추가</button>
+              </div>
+              <div class="selected-tags" id="selectedTags"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="entryMood">기분</label>
+            <div class="mood-selector" id="moodSelector">
+              <button type="button" class="mood-btn" data-mood="happy">😊</button>
+              <button type="button" class="mood-btn" data-mood="love">😍</button>
+              <button type="button" class="mood-btn" data-mood="sleepy">😴</button>
+              <button type="button" class="mood-btn" data-mood="playful">🤪</button>
+              <button type="button" class="mood-btn" data-mood="hungry">🤤</button>
+              <button type="button" class="mood-btn" data-mood="sick">🤒</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-cancel" id="btnCancel">취소</button>
+            <button type="submit" class="btn btn-save">저장하기 💾</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 상세 보기 모달 -->
+    <div class="modal-overlay" id="detailOverlay">
+      <div class="modal modal-detail" id="detailModal">
+        <div class="modal-header">
+          <h2 id="detailTitle"></h2>
+          <button class="modal-close" id="btnCloseDetail">&times;</button>
+        </div>
+        <div class="detail-content" id="detailContent"></div>
+        <div class="detail-actions">
+          <button class="btn btn-edit" id="btnEdit">수정 ✏️</button>
+          <button class="btn btn-delete" id="btnDelete">삭제 🗑️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
